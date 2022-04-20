@@ -35,24 +35,28 @@ interface IPairPrices {
   inputTokenAddress: string;
   outputTokenAddress: string;
   inputAmount: ethers.BigNumber;
+  outputAmount: ethers.BigNumber;
 }
 
 const getPairPrices = async ({
   inputTokenAddress,
   outputTokenAddress,
   inputAmount,
+  outputAmount,
 }: IPairPrices) => {
   const { amount: uniswapAmount, invertedAmount: uniswapInvertedAmount } =
     await getUniswapV2Prices({
       inputTokenAddress,
       outputTokenAddress,
       inputAmount,
+      outputAmount,
     });
   const { amount: sushiswapAmount, invertedAmount: sushiswapInvertedAmount } =
     await getSushiSwapPrices({
       inputTokenAddress,
       outputTokenAddress,
       inputAmount,
+      outputAmount,
     });
 
   const {
@@ -64,6 +68,7 @@ const getPairPrices = async ({
     inputTokenAddress,
     outputTokenAddress,
     inputAmount,
+    outputAmount,
   });
 
   return {
@@ -86,6 +91,7 @@ interface CheckPairArgs {
   outputTokenAddress: string;
   outputTokenDecimals: number;
   inputAmount: ethers.BigNumber;
+  outputAmount: ethers.BigNumber;
 }
 
 async function checkPair({
@@ -96,6 +102,7 @@ async function checkPair({
   outputTokenAddress,
   outputTokenDecimals,
   inputAmount,
+  outputAmount,
 }: CheckPairArgs) {
   const {
     kyberExpectedAmount,
@@ -110,6 +117,7 @@ async function checkPair({
     inputTokenAddress,
     outputTokenAddress,
     inputAmount,
+    outputAmount,
   });
 
   // const uniToKyberSwap = uniswapAmount.mul(kyberInvertedExpectedAmount);
@@ -131,14 +139,8 @@ async function checkPair({
       "Input Token": inputTokenSymbol,
       "Output Token": outputTokenSymbol,
       "Input Amount": formatUnits(inputAmount),
-      "Uniswap Return": formatUnits(
-        uniswapAmount,
-        Math.min(inputTokenDecimals, outputTokenDecimals, 18)
-      ),
-      "Sushiswap Return": formatUnits(
-        sushiswapAmount,
-        Math.min(inputTokenDecimals, outputTokenDecimals, 18)
-      ),
+      "Uniswap Return": formatUnits(uniswapAmount, outputTokenDecimals),
+      "Sushiswap Return": formatUnits(sushiswapAmount, outputTokenDecimals),
       "Kyber Expected Rate": formatUnits(kyberExpectedAmount, 18),
       "Kyber Min Return": formatUnits(kyberSlippageAmount, 18),
       Timestamp: moment().tz("America/Chicago").format(),
@@ -147,13 +149,10 @@ async function checkPair({
       "Input Token": outputTokenSymbol,
       "Output Token": inputTokenSymbol,
       "Input Amount": formatUnits(inputAmount, 18),
-      "Uniswap Return": formatUnits(
-        uniswapInvertedAmount,
-        Math.min(inputTokenDecimals, outputTokenDecimals, 18)
-      ),
+      "Uniswap Return": formatUnits(uniswapInvertedAmount, inputTokenDecimals),
       "Sushiswap Return": formatUnits(
         sushiswapInvertedAmount,
-        Math.min(inputTokenDecimals, outputTokenDecimals, 18)
+        inputTokenDecimals
       ),
       "Kyber Expected Rate": formatUnits(kyberInvertedExpectedAmount, 18),
       "Kyber Min Return": formatUnits(kyberInvertedSlippageAmount, 18),
@@ -178,6 +177,7 @@ const monitorPrices = async (mainToken: IToken, tokens: IToken[]) => {
       outputTokenAddress: tokenAddress,
       outputTokenDecimals: tokenDecimals,
       inputAmount: parseUnits("1", mainTokenDecimals),
+      outputAmount: parseUnits("1", tokenDecimals),
     });
   }
 };

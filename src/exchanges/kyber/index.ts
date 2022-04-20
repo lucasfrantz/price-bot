@@ -13,6 +13,7 @@ export const getKyberPrices = async ({
   inputTokenAddress,
   outputTokenAddress,
   inputAmount,
+  outputAmount,
 }: IPairPrices) => {
   const { expectedRate: expectedAmount, slippageRate: slippageAmount } =
     await kyber.getExpectedRate(
@@ -26,7 +27,7 @@ export const getKyberPrices = async ({
   } = await kyber.getExpectedRate(
     outputTokenAddress,
     inputTokenAddress,
-    inputAmount
+    outputAmount
   );
 
   return {

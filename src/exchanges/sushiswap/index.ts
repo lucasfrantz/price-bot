@@ -16,11 +16,12 @@ export const getSushiSwapPrices = async ({
   inputTokenAddress,
   outputTokenAddress,
   inputAmount,
+  outputAmount,
 }: IPairPrices) => {
   const path = [inputTokenAddress, outputTokenAddress];
   const amounts = await sushiswap.getAmountsOut(inputAmount, path);
   const invertedAmounts = await sushiswap.getAmountsOut(
-    inputAmount,
+    outputAmount,
     path.reverse()
   );
   const amount = amounts[1];

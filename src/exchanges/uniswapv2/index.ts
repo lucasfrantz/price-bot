@@ -20,11 +20,12 @@ export const getUniswapV2Prices = async ({
   inputTokenAddress,
   outputTokenAddress,
   inputAmount,
+  outputAmount,
 }: IPairPrices) => {
   const path = [inputTokenAddress, outputTokenAddress];
   const amounts = await uniswapV2.getAmountsOut(inputAmount, path);
   const invertedAmounts = await uniswapV2.getAmountsOut(
-    inputAmount,
+    outputAmount,
     path.reverse()
   );
   const amount = amounts[1];

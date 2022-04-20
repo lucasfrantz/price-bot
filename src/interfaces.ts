@@ -24,6 +24,7 @@ export interface IPairPrices {
   inputTokenAddress: string;
   outputTokenAddress: string;
   inputAmount: ethers.BigNumber;
+  outputAmount: ethers.BigNumber;
 }
 
 export interface IToken {
